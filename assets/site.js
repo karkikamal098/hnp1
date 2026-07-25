@@ -7,9 +7,43 @@ if (header){
 // Mobile menu
 const burger=document.querySelector('.burger'),links=document.querySelector('.navlinks');
 if(burger&&links){
-  burger.addEventListener('click',()=>links.classList.toggle('open'));
-  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+  const setMenu=(open)=>{
+    links.classList.toggle('open',open);
+    burger.setAttribute('aria-expanded',String(open));
+  };
+  setMenu(false);
+  burger.addEventListener('click',()=>setMenu(!links.classList.contains('open')));
+  // any real navigation closes the drawer — but a submenu trigger only expands it
+  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+    if(a.parentElement.classList.contains('has-sub')) return;
+    setMenu(false);
+  }));
+  addEventListener('keydown',e=>{ if(e.key==='Escape') setMenu(false); });
+  // a resize past the breakpoint must not leave the drawer state stuck on
+  addEventListener('resize',()=>{ if(innerWidth>1180) setMenu(false); },{passive:true});
 }
+
+// Dropdown menus — hover is handled in CSS; this adds keyboard, touch and Escape.
+document.querySelectorAll('.has-sub').forEach(sub=>{
+  const trigger=sub.querySelector(':scope > a'), panel=sub.querySelector('.subpanel');
+  if(!trigger||!panel) return;
+  const close=()=>{sub.classList.remove('open');trigger.setAttribute('aria-expanded','false');};
+  trigger.setAttribute('aria-expanded','false');
+  trigger.setAttribute('aria-haspopup','true');
+  // In the drawer (and on touch), the trigger expands its submenu rather than
+  // navigating; the panel's own heading links through to the parent page.
+  trigger.addEventListener('click',e=>{
+    const drawer=links&&links.classList.contains('open');
+    if(!drawer&&!matchMedia('(hover:none)').matches) return;
+    e.preventDefault();
+    const open=!sub.classList.contains('open');
+    document.querySelectorAll('.has-sub.open').forEach(o=>o!==sub&&o.classList.remove('open'));
+    sub.classList.toggle('open',open);
+    trigger.setAttribute('aria-expanded',String(open));
+  });
+  sub.addEventListener('keydown',e=>{ if(e.key==='Escape'){close();trigger.focus();} });
+  document.addEventListener('click',e=>{ if(!sub.contains(e.target)) close(); });
+});
 // Reveal + datasheet bars
 const io=new IntersectionObserver((es)=>{
   es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
@@ -20,6 +54,8 @@ const form=document.querySelector('#quoteForm');
 if(form){
   form.addEventListener('submit',(e)=>{
     e.preventDefault();
+    // don't report success on an empty form — let the browser flag what's missing
+    if(!form.reportValidity()) return;
     const b=form.querySelector('button[type=submit]');
     b.textContent='Request received ✓'; b.style.background='#4a6b3f';
     setTimeout(()=>{form.reset();b.textContent='Submit request';b.style.background='';},2600);

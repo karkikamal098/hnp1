@@ -27,7 +27,7 @@
   --wrap-nav:1560px;
   --gutter:clamp(1.25rem,4vw,4.5rem);
   --rail:56px;
-  --navh:76px;
+  --navh:88px;
   --ease:cubic-bezier(.19,1,.22,1);
   --ease2:cubic-bezier(.22,.61,.36,1);
 }
@@ -97,7 +97,13 @@ main > .section:first-child{padding-top:clamp(2.75rem,5.5vw,4.5rem)}
 header.site{position:sticky;top:0;z-index:70;background:rgba(245,244,241,.88);backdrop-filter:saturate(150%) blur(16px);border-bottom:1px solid var(--line);transition:box-shadow .4s,background .4s}
 header.site.scrolled{box-shadow:0 20px 50px -34px rgba(0,0,0,.45)}
 .nav{max-width:var(--wrap-nav);display:flex;align-items:center;justify-content:space-between;gap:clamp(1.25rem,3vw,2.75rem);height:var(--navh)}
-.brand{display:flex;flex-direction:column;justify-content:center;line-height:1;flex:none}
+/* The supplied logo is a solid-black plate with the mark and tagline baked in.
+   Rather than fight that, it's presented as a stamped plate — which reads as
+   deliberate against the paper header and disappears into the ink footer. */
+.brand{display:flex;align-items:center;flex:none;line-height:0}
+.brand .brandmark{width:auto;height:58px;display:block;transition:opacity .3s}
+.brand:hover .brandmark{opacity:.85}
+/* retained for the text fallback if the logo ever fails to load */
 .brand .hp{font-family:var(--display);font-weight:800;font-size:1.3rem;letter-spacing:-.03em;white-space:nowrap}
 .brand .hp em{font-style:normal;color:var(--corten)}
 .brand .sub{font-family:var(--mono);font-size:.5rem;letter-spacing:.18em;color:var(--steel);margin-top:.4rem;white-space:nowrap}
@@ -284,6 +290,12 @@ a.pgh-cell:hover .v{color:var(--corten)}
 .cap.span-5{grid-column:span 5}
 .cap.span-6{grid-column:span 6}
 .cap.span-4{grid-column:span 4}
+/* span-12 is the full-width banner card (its .ph carries an inline 32/9 ratio).
+   This rule was simply missing, so the card collapsed to one 1/12 column
+   ≈ 100px wide and its copy wrapped one word per line. */
+.cap.span-12{grid-column:span 12}
+.cap.span-12 h3{font-size:clamp(1.5rem,2.6vw,2.1rem)}
+@media(max-width:860px){.cap.span-12 .ph{aspect-ratio:16/9!important}}
 
 /* ============================================================
    MARQUEE / MATERIALS STRIP
@@ -436,8 +448,19 @@ footer.site{background:var(--ink);color:var(--paper);padding-block:clamp(4rem,7v
 .foot-top{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:2.5rem;padding-bottom:3rem;border-bottom:1px solid rgba(255,255,255,.14)}
 .foot-brand .hp{font-family:var(--display);font-weight:800;font-size:1.5rem}
 .foot-brand .hp em{font-style:normal;color:var(--corten)}
-.foot-brand .motto{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--corten);margin-top:.5rem}
+/* The logo's plate is pure #000 against a #141413 footer, which leaves a faint
+   rectangle. `lighten` keeps the gold (max wins) and drops the black out, so
+   the mark sits on the ink with no visible edge. */
+.foot-logo{width:auto;height:74px;display:block;margin-left:-4px;mix-blend-mode:lighten}
+.foot-brand .motto{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--corten);margin-top:.9rem}
 .foot-brand p{color:var(--steel-2);margin-top:1.2rem;max-width:36ch;font-size:.92rem}
+/* real trust mark from hnpbuilding.com */
+.foot-usa{width:132px;height:auto;margin-top:1.6rem;border:1px solid rgba(255,255,255,.16)}
+/* legal / cross-links to the live store */
+.foot-legal{display:flex;flex-wrap:wrap;gap:.6rem 1.6rem;padding-top:2rem;margin-top:.5rem;
+  border-top:1px solid rgba(255,255,255,.1)}
+.foot-legal a{font-family:var(--mono);font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--steel-2);transition:color .3s}
+.foot-legal a:hover{color:var(--corten)}
 .foot-col h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--steel-2);font-weight:500;margin-bottom:1.1rem}
 .foot-col a{display:block;color:#ddd7cc;font-size:.94rem;padding-block:.35rem;transition:color .3s}
 .foot-col a:hover{color:var(--corten)}
@@ -580,7 +603,10 @@ footer.site{background:var(--ink);color:var(--paper);padding-block:clamp(4rem,7v
 .pd-hero .pd-lead .lede{margin-top:1.2rem}
 .pd-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
 .pd-mats{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.6rem}
-.pill{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:.45rem .85rem;border:1px solid var(--line-2);color:var(--steel);border-radius:1px}
+/* .chip is the application-row variant of .pill. It had no rule at all, so the
+   labels rendered as bare inline text despite carrying inline border colours. */
+.pill,.chip{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.45rem .85rem;border:1px solid var(--line-2);color:var(--steel);border-radius:1px;line-height:1.4}
 
 /* --- feature list w/ ticks --- */
 .featlist{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem 2rem;margin-top:1.5rem}

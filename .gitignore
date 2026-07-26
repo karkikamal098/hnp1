@@ -1,0 +1,12 @@
+# dependencies (installed on demand by tools/wire-photos.js when needed)
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+__pycache__/
+*.pyc
+
+# scratch / temp artifacts from image processing experiments
+tools/_*

@@ -1,3 +1,50 @@
+// tel: links are a silent no-op on any desktop with no calling app registered
+// — expected browser behaviour, not a bug, but it reads as "broken" because
+// nothing visible happens and the number is never shown. On click, copy the
+// number and confirm it with a toast; this never calls preventDefault, so a
+// phone or a desktop with a calling handler still gets the native tel: dial.
+document.querySelectorAll('a[href^="tel:"]').forEach(a => {
+  a.addEventListener('click', () => {
+    const number = a.getAttribute('title')?.match(/[\d()+\- ]{7,}/)?.[0].trim()
+      || a.getAttribute('href').replace('tel:', '');
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(number).then(() => {
+      let toast = document.querySelector('.tel-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'tel-toast';
+        toast.setAttribute('role', 'status');
+        document.body.appendChild(toast);
+      }
+      toast.textContent = `${number} copied to clipboard`;
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.classList.remove('show'), 2600);
+    }).catch(() => {});
+  });
+});
+
+// Pre-fill the RFQ form from a "Featured design" card link
+// (?project=...&material=...) — arrives from tools/sync-catalogue.js output.
+// No cart, no checkout: this is the only conversion path on the site.
+const quoteForm = document.querySelector('#quoteForm');
+if (quoteForm) {
+  const qs = new URLSearchParams(location.search);
+  const project = qs.get('project'), material = qs.get('material');
+  if (project) {
+    const f = quoteForm.querySelector('#q-project');
+    if (f) f.value = project;
+  }
+  if (material) {
+    const f = quoteForm.querySelector('#q-material');
+    if (f && [...f.options].some(o => o.value === material)) f.value = material;
+  }
+  if (project) {
+    const details = quoteForm.querySelector('#q-details');
+    if (details && !details.value) details.placeholder = `Requesting: ${project}. Add dimensions, finish, load case, timeline…`;
+  }
+}
+
 // Header shadow
 const header = document.querySelector('header.site');
 if (header){

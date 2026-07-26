@@ -116,6 +116,11 @@ header.site.scrolled{box-shadow:0 20px 50px -34px rgba(0,0,0,.45)}
 .navlinks a.active{color:var(--corten)}
 .nav-cta{display:flex;align-items:center;gap:1rem;flex:none}
 .nav-cta .btn{padding:.85rem 1.35rem;font-size:.72rem}
+/* fills the gap left when the topbar's phone link disappears on mobile (below)
+   — hidden here so desktop keeps a single call-to-action, not two */
+.nav-call{display:none;flex:none;width:44px;height:44px;border:1px solid var(--line-2);border-radius:50%;
+  align-items:center;justify-content:center;color:var(--ink);transition:background .3s,color .3s,border-color .3s}
+.nav-call:hover{background:var(--corten);border-color:var(--corten);color:#fff}
 .burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;align-items:center}
 .burger span{width:22px;height:2px;background:var(--ink);transition:transform .35s var(--ease),opacity .2s}
 .burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
@@ -530,6 +535,7 @@ footer.site{background:var(--ink);color:var(--paper);padding-block:clamp(4rem,7v
 }
 @media(max-width:900px){
   .nav-cta .btn{display:none}
+  .nav-call{display:inline-flex}
   .topbar .tb-right{display:none}
   .topbar .wrap{justify-content:center}
 }
@@ -659,6 +665,16 @@ footer.site{background:var(--ink);color:var(--paper);padding-block:clamp(4rem,7v
 .qa.open button .qi{background:var(--corten);color:#fff;border-color:var(--corten);transform:rotate(45deg)}
 .qa .qbody{max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
 .qa .qbody p{color:var(--steel);padding-bottom:1.6rem;max-width:72ch}
+
+/* ============================================================
+   TEL: COPY TOAST — confirms the click did something on desktops
+   with no calling app registered (tel: is otherwise a silent no-op)
+   ============================================================ */
+.tel-toast{position:fixed;left:50%;bottom:1.8rem;z-index:200;transform:translate(-50%,12px);
+  background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;
+  padding:.9rem 1.4rem;border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 50px -24px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease2),transform .3s var(--ease2)}
+.tel-toast.show{opacity:1;transform:translate(-50%,0)}
 
 @media(max-width:1040px){.gallery{columns:2}.patgrid{grid-template-columns:repeat(2,1fr)}.featlist{grid-template-columns:1fr}}
 @media(max-width:860px){.pd-hero{grid-template-columns:1fr}}

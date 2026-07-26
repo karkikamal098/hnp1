@@ -5,13 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Request a Quote — H&amp;P Building</title>
 <meta name="description" content="Request a quote for custom architectural metal fabrication in Corten steel, aluminium and stainless steel. Send drawings and project details to H&amp;P Building, Colorado.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.shopify.com"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="canonical" href="https://hnpbuilding.com/contact.html">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#141413">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="H&amp;P Building">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://hnpbuilding.com/contact.html">
+<meta property="og:title" content="Request a Quote — H&P Building">
+<meta property="og:description" content="Request a quote for custom architectural metal fabrication in Corten steel, aluminium and stainless steel. Send drawings and project details to H&P Building, Colorado.">
+<meta property="og:image" content="https://cdn.shopify.com/s/files/1/0580/4032/0129/files/image_20.png?width=1200">
+<meta property="og:image:width" content="1200">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@HPBuilding2">
+<meta name="twitter:title" content="Request a Quote — H&P Building">
+<meta name="twitter:description" content="Request a quote for custom architectural metal fabrication in Corten steel, aluminium and stainless steel. Send drawings and project details to H&P Building, Colorado.">
+<meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0580/4032/0129/files/image_20.png?width=1200">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.svg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://hnpbuilding.com/"},{"@type":"ListItem","position":2,"name":"Request a Quote","item":"https://hnpbuilding.com/contact.html"}]}</script>
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="topbar"><div class="wrap"><span>Custom architectural metal systems · Engineered &amp; fabricated in the USA</span><div class="tb-right"><a href="resources.html">Downloads</a><a href="contact.html">Request a quote</a><a href="tel:+10000000000">Talk to fabrication</a></div></div></div>
+<div class="topbar"><div class="wrap"><span>Custom architectural metal systems · Engineered &amp; fabricated in the USA</span><div class="tb-right"><a href="resources.html">Downloads</a><a href="contact.html">Request a quote</a><a href="tel:+17206099307">Talk to fabrication</a></div></div></div>
 
 <header class="site"><div class="wrap nav">
   <a class="brand" href="index.html"><span class="hp">H<em>&amp;</em>P BUILDING</span><span class="sub">QUALITY NEVER GOES OUT OF STYLE</span></a>
@@ -38,8 +57,9 @@
       <p class="lede" style="margin-top:1.5rem">Precision-manufactured Corten steel, aluminium and stainless steel. Send drawings or a description and we'll respond with material options, feasibility and pricing.</p>
       <div class="rule"></div>
       <table class="proptable" style="max-width:440px">
-        <tr><td>Email</td><td>hello@hnpbuilding.com</td></tr>
-        <tr><td>Location</td><td>Colorado, USA</td></tr>
+        <tr><td>Email</td><td>sales@hnpbuilding.com</td></tr>
+        <tr><td>Phone</td><td><a href="tel:+17206099307">(720) 609-9307</a></td></tr>
+        <tr><td>Location</td><td>2299 Salt Ranch Trail<br>Hartsel, CO 80449, USA</td></tr>
         <tr><td>Serving</td><td>Nationwide · commercial &amp; residential</td></tr>
         <tr><td>Response</td><td>Within 1–2 business days</td></tr>
       </table>
@@ -49,16 +69,25 @@
     <div class="formwrap" data-reveal data-d="1">
       <div class="fhead"><span>Project enquiry</span><span class="code">FORM · RFQ-01</span></div>
       <div class="formbody">
-        <form id="quoteForm">
+        <form id="quoteForm" method="post" novalidate>
           <div class="fgrid">
-            <div class="field"><label>Name <span class="req">*</span></label><input required type="text" placeholder="Your name"></div>
-            <div class="field"><label>Email <span class="req">*</span></label><input required type="email" placeholder="you@studio.com"></div>
-            <div class="field"><label>Company name <span class="req">*</span></label><input required type="text" placeholder="Practice or firm"></div>
-            <div class="field"><label>Phone number</label><input type="tel" placeholder="Optional"></div>
-            <div class="field"><label>Project name <span class="req">*</span></label><input required type="text" placeholder="Project reference"></div>
-            <div class="field"><label>Material requested <span class="req">*</span></label><select required><option value="">Select a material</option><option>Corten Steel</option><option>Aluminium</option><option>Stainless Steel</option><option>Carbon Steel</option><option>Not sure — advise me</option></select></div>
-            <div class="field full"><label>Project details</label><textarea placeholder="Application, dimensions, finish, load case, timeline…"></textarea></div>
+            <div class="field"><label for="q-name">Name <span class="req" aria-hidden="true">*</span></label>
+              <input id="q-name" name="name" required type="text" autocomplete="name" placeholder="Your name"></div>
+            <div class="field"><label for="q-email">Email <span class="req" aria-hidden="true">*</span></label>
+              <input id="q-email" name="email" required type="email" autocomplete="email" placeholder="you@studio.com"></div>
+            <div class="field"><label for="q-company">Company name <span class="req" aria-hidden="true">*</span></label>
+              <input id="q-company" name="company" required type="text" autocomplete="organization" placeholder="Practice or firm"></div>
+            <div class="field"><label for="q-phone">Phone number</label>
+              <input id="q-phone" name="phone" type="tel" autocomplete="tel" placeholder="Optional"></div>
+            <div class="field"><label for="q-project">Project name <span class="req" aria-hidden="true">*</span></label>
+              <input id="q-project" name="project" required type="text" placeholder="Project reference"></div>
+            <div class="field"><label for="q-material">Material requested <span class="req" aria-hidden="true">*</span></label>
+              <select id="q-material" name="material" required><option value="">Select a material</option><option>Corten Steel</option><option>Aluminium</option><option>Stainless Steel</option><option>Carbon Steel</option><option>Not sure — advise me</option></select></div>
+            <div class="field full"><label for="q-details">Project details</label>
+              <textarea id="q-details" name="details" placeholder="Application, dimensions, finish, load case, timeline…"></textarea></div>
           </div>
+          <!-- honeypot: real people never fill this in -->
+          <div class="field" aria-hidden="true" style="position:absolute;left:-9999px"><label for="q-website">Website</label><input id="q-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
           <button type="submit" class="btn btn-corten" style="width:100%;justify-content:center;margin-top:1.5rem">Submit request</button>
         </form>
       </div>
@@ -73,7 +102,15 @@
     <div class="foot-brand"><div class="hp">H<em>&amp;</em>P BUILDING</div><div class="motto">Quality never goes out of style</div><p>Custom architectural metal fabrication in Corten steel, aluminium and stainless — founded in Colorado, 2017.</p></div>
     <div class="foot-col"><h4>Systems</h4><a href="products.html">Facades &amp; cladding</a><a href="products.html">Privacy screens</a><a href="products.html">Railings</a><a href="products.html">Custom fabrication</a></div>
     <div class="foot-col"><h4>Practice</h4><a href="architects.html">For architects</a><a href="materials.html">Materials</a><a href="projects.html">Projects</a><a href="about.html">About</a></div>
-    <div class="foot-col"><h4>Contact</h4><a href="contact.html">Request a quote</a><a href="mailto:hello@hnpbuilding.com">hello@hnpbuilding.com</a><a href="#">Colorado, USA</a></div>
+    <div class="foot-col"><h4>Contact</h4><a href="contact.html">Request a quote</a><a href="mailto:sales@hnpbuilding.com">sales@hnpbuilding.com</a><a href="https://maps.google.com/?q=2299+Salt+Ranch+Trail,+Hartsel,+CO+80449" target="_blank" rel="noopener">Hartsel, Colorado</a>
+    <div class="foot-social">
+      <a href="https://www.instagram.com/hnpbuilding" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/outdoorprivacyscreenscortensteel" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://www.linkedin.com/company/h-p-building/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.pinterest.com/hnpbuilding/" target="_blank" rel="noopener">Pinterest</a>
+      <a href="https://x.com/HPBuilding2" target="_blank" rel="noopener">X</a>
+    </div>
+  </div>
   </div>
   <div class="foot-bot"><span>© 2026 H&amp;P Building · All rights reserved</span><span>Engineered &amp; made in the USA</span></div>
 </div></footer>

@@ -132,6 +132,22 @@ header.site.scrolled{box-shadow:0 20px 50px -34px rgba(0,0,0,.45)}
 .ph.light{background:
   repeating-linear-gradient(135deg,rgba(0,0,0,.035) 0 1px,transparent 1px 13px),
   linear-gradient(155deg,#e7e3da 0%,#d5cfc3 100%)}
+/* ---- real photography ----------------------------------------------------
+   The gradient plate stays underneath as the loading state and as the fallback
+   if a CDN image ever 404s, so a slot is never blank. */
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;
+  opacity:0;transition:opacity .7s var(--ease2)}
+.ph img.loaded,.ph img[data-eager]{opacity:1}
+/* the drawn-plate treatments are for placeholders — they read as damage over a photo */
+.ph.has-img::before{display:none}
+.ph.has-img::after{border-color:rgba(255,255,255,.22);z-index:2}
+/* keep captions legible over any photograph */
+.ph.has-img{background-image:none;background-color:var(--paper-3)}
+.ph.has-img > .tag,.ph.has-img > .corner{z-index:3}
+.ph.has-img > .tag{background:rgba(0,0,0,.5);border-color:rgba(255,255,255,.28);color:#fff;backdrop-filter:blur(4px)}
+.ph.has-img > .corner{color:rgba(255,255,255,.9);text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.hero .bg .ph.has-img::after,.band .ph.has-img::after{display:none}
+
 /* perforation texture — every plate reads as the metal this company actually cuts */
 .ph::before{content:"";position:absolute;inset:0;pointer-events:none;
   background-image:radial-gradient(circle at center,rgba(0,0,0,.5) 22%,transparent 24%);
@@ -163,11 +179,13 @@ header.site.scrolled{box-shadow:0 20px 50px -34px rgba(0,0,0,.45)}
 @media(max-width:1040px){.hero .bg .ph .tag{display:none}}
 /* scrim: keep the frame near-black so the type carries, and let the corten
    read as a glow at the right edge instead of washing the whole panel brown */
-.hero .bg::after{content:"";position:absolute;inset:0;background:
-  linear-gradient(100deg,rgba(13,13,12,.975) 0%,rgba(13,13,12,.945) 40%,rgba(13,13,12,.78) 72%,rgba(13,13,12,.5) 100%),
-  linear-gradient(to top,rgba(13,13,12,.9) 0%,rgba(13,13,12,0) 42%)}
-.hero .grid-lines{position:absolute;inset:0;z-index:1;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:64px 64px;pointer-events:none}
-.hero-inner{position:relative;z-index:3;padding-block:clamp(5rem,13vw,10rem)}
+/* z-index:2 keeps the scrim above the photograph (.ph img sits at z-index:1) —
+   without it, white hero type lands on whatever the image happens to be. */
+.hero .bg::after{content:"";position:absolute;inset:0;z-index:2;background:
+  linear-gradient(100deg,rgba(13,13,12,.96) 0%,rgba(13,13,12,.9) 38%,rgba(13,13,12,.72) 70%,rgba(13,13,12,.52) 100%),
+  linear-gradient(to top,rgba(13,13,12,.92) 0%,rgba(13,13,12,0) 45%)}
+.hero .grid-lines{position:absolute;inset:0;z-index:3;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:64px 64px;pointer-events:none}
+.hero-inner{position:relative;z-index:4;padding-block:clamp(5rem,13vw,10rem)}
 .hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--steel-2);margin-bottom:2.4rem}
 .hero-meta b{color:var(--corten);font-weight:500}
 .hero h1{max-width:17ch}
@@ -176,7 +194,7 @@ header.site.scrolled{box-shadow:0 20px 50px -34px rgba(0,0,0,.45)}
 .hero-actions{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.8rem}
 .hero .btn-line{border-color:rgba(255,255,255,.32);color:var(--paper)}
 .hero .btn-line:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
-.hero-index{position:relative;z-index:3;border-top:1px solid rgba(255,255,255,.15);display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.hero-index{position:relative;z-index:4;border-top:1px solid rgba(255,255,255,.15);display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 /* direct children only — the unscoped selector was also padding the .k/.v labels
    inside each cell, tripling the row height. minmax(0,1fr) + min-width:0 lets a
    long value wrap instead of blowing the row out. */
@@ -406,6 +424,10 @@ a.pgh-cell:hover .v{color:var(--corten)}
 .field input,.field select,.field textarea{font-family:var(--body);font-size:1rem;color:var(--ink);padding:.9rem 1rem;border:1px solid var(--line-2);border-radius:1px;background:var(--paper);transition:border-color .3s,background .3s}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--corten);background:var(--white)}
 .field textarea{resize:vertical;min-height:130px}
+.field input:invalid:not(:placeholder-shown),.field select:invalid:not([value=""]):focus{border-color:#a33}
+.formstatus{margin-top:1rem;font-size:.92rem;line-height:1.5;min-height:1px}
+.formstatus.ok{color:#4a6b3f}
+.formstatus.err{color:#a33}
 
 /* ============================================================
    FOOTER
@@ -419,6 +441,9 @@ footer.site{background:var(--ink);color:var(--paper);padding-block:clamp(4rem,7v
 .foot-col h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--steel-2);font-weight:500;margin-bottom:1.1rem}
 .foot-col a{display:block;color:#ddd7cc;font-size:.94rem;padding-block:.35rem;transition:color .3s}
 .foot-col a:hover{color:var(--corten)}
+.foot-social{display:flex;flex-wrap:wrap;gap:.3rem .9rem;margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,.14)}
+.foot-social a{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--steel-2);padding-block:.25rem}
+.foot-social a:hover{color:var(--corten)}
 .foot-bot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;padding-top:2rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:var(--steel-2);text-transform:uppercase}
 
 /* ============================================================

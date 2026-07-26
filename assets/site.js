@@ -44,21 +44,86 @@ document.querySelectorAll('.has-sub').forEach(sub=>{
   sub.addEventListener('keydown',e=>{ if(e.key==='Escape'){close();trigger.focus();} });
   document.addEventListener('click',e=>{ if(!sub.contains(e.target)) close(); });
 });
+// Photography: fade in once decoded, and fall back to the drawn plate if the
+// CDN ever fails to serve an image, so a slot is never blank.
+document.querySelectorAll('.ph img').forEach(img=>{
+  const done=()=>img.classList.add('loaded');
+  if(img.complete&&img.naturalWidth) done();
+  else img.addEventListener('load',done,{once:true});
+  img.addEventListener('error',()=>{
+    img.remove();
+    const ph=img.closest('.ph');
+    if(ph) ph.classList.remove('has-img');   // restores the gradient + perforation
+  },{once:true});
+});
+
 // Reveal + datasheet bars
 const io=new IntersectionObserver((es)=>{
   es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
 },{threshold:.12,rootMargin:'0px 0px -6% 0px'});
 document.querySelectorAll('[data-reveal],.datasheet').forEach(el=>io.observe(el));
-// Form demo
+/* ---------------------------------------------------------------------------
+   QUOTE FORM
+   Set QUOTE_ENDPOINT to your form service (Formspree, Basin, Netlify Forms,
+   or your own POST URL) and submissions are sent there over fetch.
+   Until it is set, the form opens a pre-filled email to sales@ instead — so a
+   real enquiry always reaches you rather than being silently swallowed.
+--------------------------------------------------------------------------- */
+const QUOTE_ENDPOINT = '';                       // e.g. 'https://formspree.io/f/xxxxxxxx'
+const QUOTE_MAILBOX  = 'sales@hnpbuilding.com';
+
 const form=document.querySelector('#quoteForm');
 if(form){
-  form.addEventListener('submit',(e)=>{
+  const btn=form.querySelector('button[type=submit]');
+  const label=btn?btn.textContent:'';
+  let status=form.querySelector('.formstatus');
+  if(!status){
+    status=document.createElement('p');
+    status.className='formstatus';
+    status.setAttribute('role','status');
+    status.setAttribute('aria-live','polite');
+    btn.insertAdjacentElement('afterend',status);
+  }
+  const say=(msg,kind)=>{ status.textContent=msg; status.className='formstatus '+(kind||''); };
+
+  form.addEventListener('submit',async(e)=>{
     e.preventDefault();
-    // don't report success on an empty form — let the browser flag what's missing
-    if(!form.reportValidity()) return;
-    const b=form.querySelector('button[type=submit]');
-    b.textContent='Request received ✓'; b.style.background='#4a6b3f';
-    setTimeout(()=>{form.reset();b.textContent='Submit request';b.style.background='';},2600);
+    if(form.website && form.website.value) return;   // honeypot tripped — silently drop
+    if(!form.reportValidity()) return;           // never report success on an invalid form
+    const data=new FormData(form);
+    data.delete('website');
+
+    if(QUOTE_ENDPOINT){
+      btn.disabled=true; btn.textContent='Sending…'; say('');
+      try{
+        const r=await fetch(QUOTE_ENDPOINT,{method:'POST',body:data,headers:{Accept:'application/json'}});
+        if(!r.ok) throw new Error(r.status);
+        form.reset();
+        btn.textContent='Request received ✓';
+        say('Thanks — we’ll respond within 1–2 business days.','ok');
+      }catch(err){
+        btn.textContent=label;
+        say('That didn’t send. Email '+QUOTE_MAILBOX+' or call (720) 609-9307 and we’ll pick it up.','err');
+      }finally{
+        btn.disabled=false;
+        setTimeout(()=>{btn.textContent=label;},4000);
+      }
+      return;
+    }
+
+    // No endpoint configured: hand the enquiry to the user's mail client.
+    const line=(k,v)=>v?k+': '+v+'\n':'';
+    const body=
+      line('Name',data.get('name'))+line('Company',data.get('company'))+
+      line('Email',data.get('email'))+line('Phone',data.get('phone'))+
+      line('Project',data.get('project'))+line('Material',data.get('material'))+
+      '\n'+(data.get('details')||'');
+    const href='mailto:'+QUOTE_MAILBOX
+      +'?subject='+encodeURIComponent('Quote request — '+(data.get('project')||data.get('company')||'new enquiry'))
+      +'&body='+encodeURIComponent(body);
+    window.location.href=href;
+    say('Opening your email app with this request pre-filled. If nothing happens, email '
+        +QUOTE_MAILBOX+' directly.','ok');
   });
 }
 

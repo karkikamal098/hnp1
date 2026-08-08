@@ -111,12 +111,20 @@ const io=new IntersectionObserver((es)=>{
 document.querySelectorAll('[data-reveal],.datasheet').forEach(el=>io.observe(el));
 /* ---------------------------------------------------------------------------
    QUOTE FORM
-   Set QUOTE_ENDPOINT to your form service (Formspree, Basin, Netlify Forms,
-   or your own POST URL) and submissions are sent there over fetch.
-   Until it is set, the form opens a pre-filled email to sales@ instead — so a
-   real enquiry always reaches you rather than being silently swallowed.
+   Submissions POST to QUOTE_ENDPOINT, which is api/quote.js — it creates the
+   Shopify customer and the RFQ draft order that the customer later sees when
+   they log in at hnpbuilding.com/account.
+
+   The relative path assumes the function is deployed alongside this site
+   (Vercel and Netlify both serve /api/* next to the static files). Point it at
+   an absolute URL if the function ends up on a different host, or set it to ''
+   to go back to email-only.
+
+   Whatever happens, a real inquiry always reaches sales: if the endpoint is
+   unset, unreachable, or errors, the form falls through to a pre-filled email
+   rather than being silently swallowed.
 --------------------------------------------------------------------------- */
-const QUOTE_ENDPOINT = '';                       // e.g. 'https://formspree.io/f/xxxxxxxx'
+const QUOTE_ENDPOINT = '/api/quote';             // '' disables, falls back to email
 const QUOTE_MAILBOX  = 'sales@hnpbuilding.com';
 
 const form=document.querySelector('#quoteForm');
@@ -132,6 +140,24 @@ if(form){
     btn.insertAdjacentElement('afterend',status);
   }
   const say=(msg,kind)=>{ status.textContent=msg; status.className='formstatus '+(kind||''); };
+
+  // Hand the inquiry to the visitor's mail client. Used when no endpoint is
+  // configured, and as the last resort when the endpoint fails — a quote
+  // request is too valuable to drop just because the intake is down.
+  const openMailto=(data,msg,kind)=>{
+    const line=(k,v)=>v?k+': '+v+'\n':'';
+    const body=
+      line('Name',data.get('name'))+line('Company',data.get('company'))+
+      line('Email',data.get('email'))+line('Phone',data.get('phone'))+
+      line('Project',data.get('project'))+line('Material',data.get('material'))+
+      '\n'+(data.get('details')||'');
+    const href='mailto:'+QUOTE_MAILBOX
+      +'?subject='+encodeURIComponent('Quote request — '+(data.get('project')||data.get('company')||'new inquiry'))
+      +'&body='+encodeURIComponent(body);
+    window.location.href=href;
+    say(msg||('Opening your email app with this request pre-filled. If nothing happens, email '
+        +QUOTE_MAILBOX+' directly.'),kind||'ok');
+  };
 
   form.addEventListener('submit',async(e)=>{
     e.preventDefault();
@@ -150,7 +176,8 @@ if(form){
         say('Thanks — we’ll respond within 1–2 business days.','ok');
       }catch(err){
         btn.textContent=label;
-        say('That didn’t send. Email '+QUOTE_MAILBOX+' or call (720) 609-9307 and we’ll pick it up.','err');
+        openMailto(data,'That didn’t send — opening your email app instead. '
+          +'If nothing happens, email '+QUOTE_MAILBOX+' or call (720) 609-9307.','err');
       }finally{
         btn.disabled=false;
         setTimeout(()=>{btn.textContent=label;},4000);
@@ -158,19 +185,7 @@ if(form){
       return;
     }
 
-    // No endpoint configured: hand the enquiry to the user's mail client.
-    const line=(k,v)=>v?k+': '+v+'\n':'';
-    const body=
-      line('Name',data.get('name'))+line('Company',data.get('company'))+
-      line('Email',data.get('email'))+line('Phone',data.get('phone'))+
-      line('Project',data.get('project'))+line('Material',data.get('material'))+
-      '\n'+(data.get('details')||'');
-    const href='mailto:'+QUOTE_MAILBOX
-      +'?subject='+encodeURIComponent('Quote request — '+(data.get('project')||data.get('company')||'new enquiry'))
-      +'&body='+encodeURIComponent(body);
-    window.location.href=href;
-    say('Opening your email app with this request pre-filled. If nothing happens, email '
-        +QUOTE_MAILBOX+' directly.','ok');
+    openMailto(data);
   });
 }
 

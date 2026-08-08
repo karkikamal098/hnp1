@@ -1,5 +1,25 @@
 # Redirect reference map — hnpbuilding.com
 
+## Current hosting state (read this first)
+
+The static site is deployed to **hnp1.vercel.app**. `hnpbuilding.com` is still served entirely by
+Shopify, so every canonical tag on this site (`https://hnpbuilding.com/<page>.html`) currently points
+at a URL that 404s.
+
+Because of that, `vercel.json` sends `X-Robots-Tag: noindex, nofollow` for any request whose host is
+`hnp1.vercel.app`. Without it, Google indexes a duplicate of the site that declares canonicals to
+dead URLs. The rule is scoped by host, so attaching the real domain lifts the block automatically —
+but **verify that after cutover**, because a stray site-wide noindex in production is silent and
+catastrophic. (`vercel.json` cannot carry a comment explaining this; Vercel validates the file
+against a strict schema and rejects unknown keys, including `"//"`.)
+
+Note also that the plan has moved on from what the sections below assume: the store is migrating to
+`hnpbuilding-2qrvii0b.myshopify.com`, and the intent is for **Vercel to own the apex** with Shopify
+on `shop.hnpbuilding.com`. That inverts the assumption in "Purpose" — Shopify will *not* keep serving
+`/products/*` on this domain, so those 78 URLs need redirects here that this document does not yet
+list.
+
+
 Purpose: Shopify continues to serve `/products/*`, `/collections/*`, `/blogs/*` and checkout — no redirects
 needed there. This doc only covers the **top-level CMS pages** on Shopify (`/pages/*`) that this static
 site now has direct equivalents for. Once hosting is decided, port this into whichever mechanism applies

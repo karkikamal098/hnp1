@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "headers": [
+    {
+      "//": "Keep the staging domain out of Google. Every page declares a canonical of https://hnpbuilding.com/<page>.html, which currently 404s because Shopify still serves that domain — so an indexable copy here competes with the live store and points crawlers at dead URLs. Scoped by host so that attaching the real domain later lifts the block automatically, with no risk of shipping a site-wide noindex to production.",
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "hnp1.vercel.app" }],
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    }
+  ]
+}

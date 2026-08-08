@@ -193,10 +193,20 @@ async function notifySales(draftOrder, f) {
 
 const REQUIRED = ['name', 'email', 'company', 'project', 'material'];
 
-export default async function handler(request) {
-  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
-  if (request.method !== 'POST') return json(405, { error: 'Method not allowed' });
+/*
+ * Exported as named HTTP-method handlers, NOT as `export default function
+ * handler(req, res)`. Vercel treats a default export as the legacy Node
+ * (request, response) signature: it passes Node's req/res, ignores whatever
+ * the function returns, and waits for res.end() that never comes — so the
+ * endpoint hangs until the platform times it out rather than erroring. Named
+ * method exports select the Web-standard Request/Response contract this file
+ * is written against. Unlisted methods get a 405 from the platform.
+ */
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS });
+}
 
+export async function POST(request) {
   let f;
   try {
     // site.js posts FormData; accept JSON too so the endpoint is easy to test.

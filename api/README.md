@@ -38,13 +38,21 @@ Set these on the host. **Never commit them.**
 
 ## 3. Host wiring
 
-The handler is the Web-standard `(Request) => Response` shape, so it runs unmodified on either host.
+The body of the function is Web-standard `Request`/`Response`, but **how it is exported is
+host-specific** — the two platforms disagree, and getting it wrong fails in a confusing way.
 
-**Vercel** — works as-is. `api/quote.js` is served at `/api/quote`, which is what
-`QUOTE_ENDPOINT` in [`../assets/site.js`](../assets/site.js) already points at. Nothing to configure.
+**Vercel** (current host) — works as-is. `api/quote.js` exports named `POST` and `OPTIONS`
+handlers, which is how Vercel's Node runtime selects the Web-standard contract. It is served at
+`/api/quote`, which `QUOTE_ENDPOINT` in [`../assets/site.js`](../assets/site.js) already points at.
 
-**Netlify** — Functions v2 uses the same handler signature but a different directory. Either move
-the file to `netlify/functions/quote.mjs`, or keep it here and add to `netlify.toml`:
+> Do **not** convert this to `export default async function handler(request)`. Vercel reads a
+> default export as the legacy Node `(req, res)` signature, passes Node's req/res, and discards the
+> returned `Response` — the endpoint then **hangs until it times out** instead of returning an
+> error. A hanging `/api/quote` with a fast 404 on other `/api/*` paths is the signature of this bug.
+
+**Netlify** — Functions v2 wants a *default* export instead: `export default async (req, context)
+=> Response`. Swap the named exports for that, then either move the file to
+`netlify/functions/quote.mjs` or keep it here and add to `netlify.toml`:
 
 ```toml
 [functions]

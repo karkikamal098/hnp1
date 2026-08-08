@@ -16,6 +16,15 @@ The GraphQL operations were validated against Admin API `2026-04`.
   `read_customers`, `write_customers`, `read_draft_orders`, `write_draft_orders`, and install it.
   Copy the Admin API access token.
 
+  > **Do this before the store is transferred to the merchant.** Since 1 Jan 2026 merchants can no
+  > longer create legacy custom apps; partners can, but only while the store is still partner-owned.
+  > Apps created beforehand keep working after transfer — but a deleted legacy app cannot be
+  > recreated, so save the token somewhere durable the moment it is revealed.
+  >
+  > If the store is already merchant-owned and the option is gone, this token type is unavailable.
+  > Fall back to a Dev Dashboard app using **custom distribution** to this single store (no App Store
+  > review). The GraphQL in `quote.js` is unchanged — only how `SHOPIFY_ADMIN_TOKEN` is obtained.
+
 ## 2. Environment variables
 
 Set these on the host. **Never commit them.**

@@ -24,7 +24,7 @@ const CONCURRENCY = 12;
 
 /* src, srcset and CSS url() all carry image references, so match the URLs
  * themselves rather than trying to parse attributes. */
-const REMOTE = /https:\/\/(?:cdn\.shopify\.com|hnpbuilding\.com)\/[^"'\s)]+?\.(?:png|jpe?g|webp|gif|svg)(?:\?[^"'\s)]*)?/gi;
+const REMOTE = /https:\/\/(?:cdn\.shopify\.com|hnpbuilding\.com)\/[^"'\s)]+?\.(?:png|jpe?g|webp|gif|svg|heic|heif|avif)(?:\?[^"'\s)]*)?/gi;
 const LOCAL = /(?:src|href)="(assets\/img\/[^"]+)"|(assets\/img\/[^"\s,]+\.(?:webp|png|jpe?g|svg))/gi;
 
 const files = fs.readdirSync(ROOT).filter((f) => f.endsWith('.html')).sort();
@@ -38,9 +38,20 @@ const add = (map, key, file) => {
   map.get(key).add(file);
 };
 
+/* og:image and friends must be absolute, so our own assets appear as
+ * https://hnpbuilding.com/assets/... . Those are this repo's files expressed
+ * absolutely — check them on disk, not over HTTP. Fetching them would report
+ * 404 until the domain points at Vercel, burying real breakage in noise. */
+const OWN_ABSOLUTE = /^https:\/\/hnpbuilding\.com\/(assets\/.+)$/;
+
 for (const file of files) {
   const s = fs.readFileSync(path.join(ROOT, file), 'utf8');
-  for (const m of s.matchAll(REMOTE)) add(remote, m[0].split('?')[0], file);
+  for (const m of s.matchAll(REMOTE)) {
+    const url = m[0].split('?')[0];
+    const own = url.match(OWN_ABSOLUTE);
+    if (own) add(local, own[1], file);
+    else add(remote, url, file);
+  }
   for (const m of s.matchAll(LOCAL)) add(local, m[1] || m[2], file);
 }
 

@@ -18,11 +18,11 @@
  *                          read_draft_orders, write_draft_orders
  * Optional:
  *   RESEND_API_KEY         if set, emails SALES_MAILBOX on each new RFQ
- *   SALES_MAILBOX          defaults to sales@hnpbuilding.com
+ *   SALES_MAILBOX          defaults to Info@hnpbuilding.com
  */
 
 const API_VERSION = '2026-04';
-const SALES_MAILBOX = process.env.SALES_MAILBOX || 'sales@hnpbuilding.com';
+const SALES_MAILBOX = process.env.SALES_MAILBOX || 'Info@hnpbuilding.com';
 
 /* The form posts from the static site, which is served from a different origin
  * than the function host until/unless they share a domain. */

@@ -29,7 +29,7 @@ const LINK = `<a href="${PORTAL}">Client login</a>`;
  *
  *  - topbar: the "Talk to fabrication" tel: link closes .tb-right, so the
  *    login link goes immediately after it as the last utility link.
- *  - footer: the sales@ mailto closes the contact/company column in both
+ *  - footer: the Info@ mailto closes the contact/company column in both
  *    footer variants (Systems/Practice/Contact on 9 pages,
  *    Systems/Explore/Company on the other 18). Anchoring on the mailto rather
  *    than on the <h4> heading means one rule covers both variants.
@@ -41,7 +41,7 @@ const SITES = [
   },
   {
     name: 'footer',
-    anchor: '<a href="mailto:sales@hnpbuilding.com">sales@hnpbuilding.com</a>',
+    anchor: '<a href="mailto:Info@hnpbuilding.com">Info@hnpbuilding.com</a>',
   },
 ];
 

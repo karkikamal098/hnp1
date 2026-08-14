@@ -8,5 +8,17 @@
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/account",
+      "destination": "https://j1rk0j-9d.myshopify.com/account",
+      "permanent": false
+    },
+    {
+      "source": "/account/:path*",
+      "destination": "https://j1rk0j-9d.myshopify.com/account/:path*",
+      "permanent": false
+    }
   ]
 }

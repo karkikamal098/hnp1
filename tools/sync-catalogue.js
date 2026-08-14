@@ -2,7 +2,8 @@
 /*
  * sync-catalogue.js
  *
- * Pulls the live, public product feed from hnpbuilding.com and drops a
+ * Pulls the live, public product feed from the store's permanent domain
+ * (j1rk0j-9d.myshopify.com — survives the apex cutover to Vercel) and drops a
  * "Featured designs" showcase into each product-system page that has real,
  * off-the-shelf SKUs behind it (Screens, Water, Fire, Planters, Edging,
  * Sculpture). Facade & Cladding, Railings & Guardrails, Stair Railings and
@@ -23,7 +24,7 @@ const path = require('path');
 const https = require('https');
 
 const ROOT = path.resolve(__dirname, '..');
-const FEED = 'https://hnpbuilding.com/products.json?limit=250';
+const FEED = 'https://j1rk0j-9d.myshopify.com/products.json?limit=250';
 const CHECK = process.argv.includes('--check');
 
 /*

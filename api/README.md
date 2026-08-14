@@ -9,8 +9,10 @@ The GraphQL operations were validated against Admin API `2026-04`.
 ## 1. Shopify admin
 
 - **Settings → Customer accounts** — already on the new passwordless version, nothing to change.
-  The portal lives at `https://shopify.com/58040320129/account`, and `hnpbuilding.com/account`
-  302-redirects to it (verified), which is what the "Client login" links across the site point at.
+  The portal lives at `https://shopify.com/58040320129/account` (verified 2026-08-14:
+  `j1rk0j-9d.myshopify.com/account` 302-redirects to that ID), and `hnpbuilding.com/account`
+  reaches it while Shopify serves the apex — after the apex moves to Vercel, the `/account`
+  redirect in `vercel.json` takes over. The "Client login" links across the site point at it.
   Sign-in method is a one-time email code; **Authentication → Manage** adjusts that if needed.
 - **Settings → Apps and sales channels → Develop apps** → create an app, grant
   `read_customers`, `write_customers`, `read_draft_orders`, `write_draft_orders`, and install it.
@@ -34,7 +36,7 @@ Set these on the host. **Never commit them.**
 | `SHOPIFY_STORE_DOMAIN` | yes | `j1rk0j-9d.myshopify.com` — the store's permanent admin domain, **not** `hnpbuilding.com` and not `hnpbuilding.myshopify.com` (that one 404s). Verified against the live store: it serves the same 78 products |
 | `SHOPIFY_ADMIN_TOKEN` | yes | from step 1 |
 | `RESEND_API_KEY` | no | if set, emails sales on each RFQ. Without it, the draft order in admin is the only notification |
-| `SALES_MAILBOX` | no | defaults to `sales@hnpbuilding.com` |
+| `SALES_MAILBOX` | no | defaults to `Info@hnpbuilding.com` |
 
 ## 3. Host wiring
 

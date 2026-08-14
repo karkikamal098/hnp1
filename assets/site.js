@@ -125,7 +125,7 @@ document.querySelectorAll('[data-reveal],.datasheet').forEach(el=>io.observe(el)
    rather than being silently swallowed.
 --------------------------------------------------------------------------- */
 const QUOTE_ENDPOINT = '/api/quote';             // '' disables, falls back to email
-const QUOTE_MAILBOX  = 'sales@hnpbuilding.com';
+const QUOTE_MAILBOX  = 'Info@hnpbuilding.com';
 
 const form=document.querySelector('#quoteForm');
 if(form){

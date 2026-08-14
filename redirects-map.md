@@ -13,11 +13,11 @@ but **verify that after cutover**, because a stray site-wide noindex in producti
 catastrophic. (`vercel.json` cannot carry a comment explaining this; Vercel validates the file
 against a strict schema and rejects unknown keys, including `"//"`.)
 
-Note also that the plan has moved on from what the sections below assume: the store is migrating to
-`hnpbuilding-2qrvii0b.myshopify.com`, and the intent is for **Vercel to own the apex** with Shopify
-on `shop.hnpbuilding.com`. That inverts the assumption in "Purpose" — Shopify will *not* keep serving
-`/products/*` on this domain, so those 78 URLs need redirects here that this document does not yet
-list.
+Note also that the plan has moved on from what the sections below assume: the store now in use is
+`j1rk0j-9d.myshopify.com` (decided 2026-08-14, superseding the earlier `hnpbuilding-2qrvii0b`
+plan), and the intent is for **Vercel to own the apex** with Shopify on `shop.hnpbuilding.com`.
+That inverts the assumption in "Purpose" — Shopify will *not* keep serving `/products/*` on this
+domain, so those 78 URLs need redirects here that this document does not yet list.
 
 
 Purpose: Shopify continues to serve `/products/*`, `/collections/*`, `/blogs/*` and checkout — no redirects

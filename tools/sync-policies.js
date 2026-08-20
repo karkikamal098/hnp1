@@ -73,6 +73,9 @@ function extractBody(html) {
   b = b.replace(/<div id="pc--optOutFormContainer"[\s\S]*?\/>/g, '');
   b = b.replace(/<script[\s\S]*?<\/script>\s*/g, '');
   b = b.replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/, ''); // page <h1> carries the title
+  // Shopify editor artifact: anchors with no href (e.g. around email addresses)
+  // — unwrap them so the text stays but no dead link is rendered
+  b = b.replace(/<a (?![^>]*href=)[^>]*>([\s\S]*?)<\/a>/g, '$1');
   return b.trim();
 }
 

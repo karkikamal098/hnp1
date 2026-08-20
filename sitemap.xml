@@ -186,4 +186,6 @@
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+  <url><loc>https://hnpbuilding.com/legal-notice.html</loc></url>
+  <url><loc>https://hnpbuilding.com/data-sharing-opt-out.html</loc></url>
 </urlset>

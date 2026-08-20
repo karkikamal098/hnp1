@@ -28,6 +28,24 @@ such as Netlify `_redirects` / Vercel `vercel.json` if the static site owns the 
 
 Format: `old URL` → `new URL` — confidence note.
 
+## Policies (decided 2026-08-20 — live hnpbuilding.com policy text copied word-for-word, required by law)
+
+The static site's policy pages carry the exact text of the live policies on hnpbuilding.com
+(fetched 2026-08-20), wrapped in this site's own design shell — only the words are copied, no
+Shopify CSS/markup. An earlier decision to keep rewritten versions was reversed the same day.
+If the Shopify policies change, re-copy the text (`/policies/*` on the live domain is the source
+of truth until cutover). Redirects are in `vercel.json` (they take effect at cutover):
+
+| Old (Shopify) | New (static site) | Notes |
+|---|---|---|
+| `/policies/privacy-policy` | `/privacy-policy.html` | verbatim copy |
+| `/policies/refund-policy` | `/refund-policy.html` | verbatim copy ("Return & Refund Policy") |
+| `/policies/shipping-policy` | `/shipping-policy.html` | verbatim copy |
+| `/policies/terms-of-service` | `/terms-of-service.html` | verbatim copy |
+| `/policies/legal-notice` | `/legal-notice.html` | verbatim copy, new page |
+| `/policies/contact-information` | `/contact.html` | note: business hours (Mon–Fri 8–5 MT) not shown on contact page |
+| `/pages/data-sharing-opt-out` | `/data-sharing-opt-out.html` | verbatim copy, new page; interactive opt-out form links to the Shopify store (it only works on the store domain); GPC honored |
+
 ## Direct matches (safe to redirect as-is)
 
 | Old (Shopify) | New (static site) | Notes |

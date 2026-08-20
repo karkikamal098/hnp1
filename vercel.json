@@ -10,6 +10,13 @@
     }
   ],
   "redirects": [
+    { "source": "/policies/privacy-policy", "destination": "/privacy-policy.html", "permanent": true },
+    { "source": "/policies/refund-policy", "destination": "/refund-policy.html", "permanent": true },
+    { "source": "/policies/shipping-policy", "destination": "/shipping-policy.html", "permanent": true },
+    { "source": "/policies/terms-of-service", "destination": "/terms-of-service.html", "permanent": true },
+    { "source": "/policies/legal-notice", "destination": "/legal-notice.html", "permanent": true },
+    { "source": "/policies/contact-information", "destination": "/contact.html", "permanent": true },
+    { "source": "/pages/data-sharing-opt-out", "destination": "/data-sharing-opt-out.html", "permanent": true },
     {
       "source": "/account",
       "destination": "https://j1rk0j-9d.myshopify.com/account",

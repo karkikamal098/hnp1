@@ -27,6 +27,11 @@ const ROOT = path.resolve(__dirname, '..');
 const FEED = 'https://j1rk0j-9d.myshopify.com/products.json?limit=250';
 const CHECK = process.argv.includes('--check');
 
+/* Prices are deliberately hidden for now — the site's job is to get the quote
+ * request, not to anchor a number before the conversation (decided 2026-08-20).
+ * Flip to true to show the store price in each card's corner again. */
+const SHOW_PRICES = false;
+
 /*
  * A product is classified ONCE, by the first rule it matches in this priority
  * order — not independently tested against every page. Without that, a title
@@ -37,13 +42,14 @@ const CHECK = process.argv.includes('--check');
  * of sculpture means the specific, structural word wins over a stray adjective.
  */
 const RULES = [
-  ['water',     /(water|fountain|cascade|basin|reflect|falls|stream|pond)/i],
+  ['water',     /(water|fountain|cascade|basin|reflect|falls|stream|pond|plunge)/i],
   ['fire',      /(fire ?pit|firepit|fireplace|fire bowl|fire table|vulcano)/i],
   ['stair',     /(stair|riser|tread|balustrade)/i],
   ['planter',   /(planter|tree grate|tree guard|trellis|raised bed)/i],
   ['edging',    /(edging|lawn edg|garden steps|border)/i],
   ['sculpture', /(sculpt|horse|mustang|garden ring|wall art|memorial)/i],
-  ['screen',    /(screen|privacy|panel|cladding|facade)/i],
+  ['screen',    /(screen|privacy|panel|cladding|facade|fence)/i],
+  ['custom',    /(gate|door)/i],
 ];
 const classify = (title) => (RULES.find(([, re]) => re.test(title)) || [null])[0];
 
@@ -55,8 +61,9 @@ const PAGES = {
   'product-planters.html':             { sref: 'B.07', cat: 'planter', material: 'Corten Steel' },
   'product-edging-furnishings.html':   { sref: 'B.08', cat: 'edging', material: 'Corten Steel' },
   'product-sculpture-structures.html': { sref: 'B.09', cat: 'sculpture', material: 'Not sure — advise me' },
+  'product-stair-railings.html':       { sref: 'B.04', cat: 'stair', material: 'Not sure — advise me' },
+  'product-custom-fabrication.html':   { sref: 'B.10', cat: 'custom', material: 'Not sure — advise me' },
 };
-const COUNT = 3;
 
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
@@ -91,15 +98,14 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
     const matches = (byCat[spec.cat] || []).filter((p) => p.images.length && p.variants.some(v => v.available));
     if (!matches.length) { console.log(`  ${file}: no live matches, skipping`); continue; }
 
-    // prefer variety: cheapest, a mid-range, and the most recently updated
-    const byPrice = [...matches].sort((a, b) => +a.variants[0].price - +b.variants[0].price);
-    const chosen = [
-      byPrice[0],
-      byPrice[Math.floor(byPrice.length / 2)],
-      [...matches].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0],
-    ].filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i).slice(0, COUNT);
+    // full current range, cheapest first, deduped on cleaned title (the store
+    // carries several "-copy" duplicates of the same design)
+    const seen = new Set();
+    const chosen = [...matches]
+      .sort((a, b) => +a.variants[0].price - +b.variants[0].price)
+      .filter((p) => { const k = cleanTitle(p.title).toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
 
-    console.log(`  ${file}: ${matches.length} live matches, featuring ${chosen.map(p => p.handle).join(', ')}`);
+    console.log(`  ${file}: ${matches.length} live matches, showing ${chosen.length} (deduped)`);
     if (CHECK) continue;
 
     const cards = chosen.map((p) => {
@@ -113,7 +119,7 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
         + `<div class="ph has-img"><img src="${img}?width=1100" `
         + `srcset="${img}?width=400 400w, ${img}?width=800 800w, ${img}?width=1100 1100w" `
         + `sizes="(max-width:860px) 94vw, 32vw" width="${p.images[0].width}" height="${p.images[0].height}" `
-        + `alt="${alt}" loading="lazy" decoding="async"><span class="corner">${money(price)}</span></div>`
+        + `alt="${alt}" loading="lazy" decoding="async">${SHOW_PRICES ? `<span class="corner">${money(price)}</span>` : ''}</div>`
         + `<div class="cbody"><div class="cref">From our current range</div><h3>${esc(title)}</h3>`
         + `<p>Request this design as shown, or specify your own dimensions and finish.</p></div></a></article>`;
     }).join('');
@@ -121,7 +127,7 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
     const section = `
 <section class="section" style="background:var(--paper-2);border-block:1px solid var(--line)">
   <div class="wrap">
-    <div class="sheet-head" data-reveal><div class="sref">${spec.sref}·D —<br>Designs</div><div class="st"><span class="eyebrow">From our current range</span><h2 class="h-lg">Featured designs.</h2><p class="lede" style="margin-top:1rem">A sample of what we've built recently in this system. Every design shown is available as-is or as a starting point for your own — request the one you like and we'll quote it to your dimensions and finish.</p></div></div>
+    <div class="sheet-head" data-reveal><div class="sref">${spec.sref}·D —<br>Designs</div><div class="st"><span class="eyebrow">From our current range</span><h2 class="h-lg">Current designs.</h2><p class="lede" style="margin-top:1rem">Every off-the-shelf design currently available in this system. Each one can be ordered as shown, or used as a starting point for your own — request the one you like and we'll quote it to your dimensions and finish.</p></div></div>
     <div class="cap-grid" style="margin-top:2.5rem">${cards}</div>
   </div>
 </section>
@@ -141,7 +147,7 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
     if (s.includes('<!-- SYNC:CATALOGUE:END -->')) {
       s = s.replace(/\n<section class="section" style="background:var\(--paper-2\)[\s\S]*?<!-- SYNC:CATALOGUE:END -->\n/, () => section);
     } else {
-      const marker = /(<\/section>\s*\n)(<section class="section">\s*\n\s*<div class="wrap">\s*\n\s*<div class="sheet-head" data-reveal><div class="sref">B\.\d+·R)/;
+      const marker = /(<\/section>\s*\n(?:<!-- FAQ:END -->\s*\n)?)(<section class="section"[^>]*>\s*\n\s*<div class="wrap">\s*\n\s*<div class="sheet-head" data-reveal><div class="sref">B\.\d+·R)/;
       if (!marker.test(s)) { console.log(`    could not find insertion point in ${file}`); continue; }
       s = s.replace(marker, (_, g1, g2) => g1 + section + g2);
     }

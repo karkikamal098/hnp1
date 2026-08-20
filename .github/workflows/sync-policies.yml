@@ -1,10 +1,11 @@
-# Keeps the legal pages word-for-word in sync with the Shopify store's policies
-# (required by law — see redirects-map.md "Policies" section). Runs daily; when
-# the store's policy text changes, the updated pages are committed and Vercel
-# redeploys from the push. sync-policies.js exits non-zero if a page can't be
-# fetched or fails word-for-word verification, which fails this job so nothing
-# partial is ever published.
-name: Sync policies from Shopify
+# Keeps the site in sync with the Shopify store daily:
+#  - policies word-for-word (required by law — see redirects-map.md "Policies")
+#  - the full product range per category page: titles, photos, prices
+# When anything changes on the store, the updated pages are committed and
+# Vercel redeploys from the push. sync-policies.js exits non-zero if a page
+# can't be fetched or fails word-for-word verification, which fails this job
+# so nothing partial is ever published.
+name: Sync policies and catalogue from Shopify
 
 on:
   schedule:
@@ -24,14 +25,16 @@ jobs:
           node-version: "20"
       - name: Sync policy text
         run: node tools/sync-policies.js
+      - name: Sync product catalogue
+        run: node tools/sync-catalogue.js
       - name: Commit and push if changed
         run: |
           if git diff --quiet; then
-            echo "Policies unchanged."
+            echo "Nothing changed."
             exit 0
           fi
-          git config user.name "policy-sync-bot"
+          git config user.name "shopify-sync-bot"
           git config user.email "actions@github.com"
           git add -- *.html
-          git commit -m "Sync policy text from Shopify (word-for-word)"
+          git commit -m "Sync policies and product catalogue from Shopify"
           git push

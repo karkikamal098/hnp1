@@ -119,7 +119,7 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
         + `<div class="ph has-img"><img src="${img}?width=1100" `
         + `srcset="${img}?width=400 400w, ${img}?width=800 800w, ${img}?width=1100 1100w" `
         + `sizes="(max-width:860px) 94vw, 32vw" width="${p.images[0].width}" height="${p.images[0].height}" `
-        + `alt="${alt}" loading="lazy" decoding="async">${SHOW_PRICES && +price > 0 ? `<span class="corner">${money(price)}</span>` : ''}</div>`
+        + `alt="${alt}" loading="lazy" decoding="async">${SHOW_PRICES && +price > 0 ? `<span class="corner price">${money(price)}</span>` : ''}</div>`
         + `<div class="cbody"><div class="cref">From our current range</div><h3>${esc(title)}</h3>`
         + `<p>Request this design as shown, or specify your own dimensions and finish.</p></div></a></article>`;
     }).join('');

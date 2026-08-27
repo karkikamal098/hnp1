@@ -27,10 +27,10 @@ const ROOT = path.resolve(__dirname, '..');
 const FEED = 'https://j1rk0j-9d.myshopify.com/products.json?limit=250';
 const CHECK = process.argv.includes('--check');
 
-/* Prices are deliberately hidden for now — the site's job is to get the quote
- * request, not to anchor a number before the conversation (decided 2026-08-20).
- * Flip to true to show the store price in each card's corner again. */
-const SHOW_PRICES = false;
+/* Show the store price in each card's corner — only for products that actually
+ * have a price in the feed (a zero/missing price renders no tag). Flip to false
+ * to hide prices again and run quote-only. */
+const SHOW_PRICES = true;
 
 /*
  * A product is classified ONCE, by the first rule it matches in this priority
@@ -119,7 +119,7 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
         + `<div class="ph has-img"><img src="${img}?width=1100" `
         + `srcset="${img}?width=400 400w, ${img}?width=800 800w, ${img}?width=1100 1100w" `
         + `sizes="(max-width:860px) 94vw, 32vw" width="${p.images[0].width}" height="${p.images[0].height}" `
-        + `alt="${alt}" loading="lazy" decoding="async">${SHOW_PRICES ? `<span class="corner">${money(price)}</span>` : ''}</div>`
+        + `alt="${alt}" loading="lazy" decoding="async">${SHOW_PRICES && +price > 0 ? `<span class="corner">${money(price)}</span>` : ''}</div>`
         + `<div class="cbody"><div class="cref">From our current range</div><h3>${esc(title)}</h3>`
         + `<p>Request this design as shown, or specify your own dimensions and finish.</p></div></a></article>`;
     }).join('');

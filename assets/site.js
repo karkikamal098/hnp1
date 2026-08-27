@@ -8,6 +8,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-reveal]').forEach(function (el) {
       el.classList.add('in');
     });
+
+    // Photos in .ph frames start at opacity:0 (style.css) and fade in once
+    // marked loaded — without this they stay invisible even after loading.
+    document.querySelectorAll('.ph img').forEach(function (img) {
+      if (img.complete && img.naturalWidth > 0) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', function () { img.classList.add('loaded'); }, { once: true });
+      }
+    });
   } catch (e) {
     // swallow errors to avoid breaking page rendering
     console.error('reveal-or-unhide error', e);

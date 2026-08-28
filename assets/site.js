@@ -4,14 +4,23 @@
 // no matter what fails elsewhere.
 const safe = (fn) => { try { fn(); } catch (e) { console.error('site.js block failed:', e); } };
 
+// CSS only hides [data-reveal] under html.js (style.css), so if this script
+// never runs — blocked, 404, fatal parse error — every page renders fully
+// visible with no animation. Policies can never blank out again.
+safe(() => { document.documentElement.classList.add('js'); });
+
 // Reveal + datasheet bars — runs first, with a hard fallback: if the observer
 // can't be set up, everything is shown immediately rather than staying hidden.
+// threshold MUST be 0: the legal pages wrap an entire multi-screen policy in
+// one [data-reveal] div, and a fractional threshold (12% visible at once) can
+// never be met by an element taller than ~8 viewports — that is exactly the
+// bug that made the policy pages invisible.
 safe(() => {
   const targets = document.querySelectorAll('[data-reveal],.datasheet');
   try {
     const io = new IntersectionObserver((es) => {
       es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -6% 0px' });
     targets.forEach(el => io.observe(el));
   } catch (e) {
     targets.forEach(el => el.classList.add('in'));
@@ -158,7 +167,8 @@ safe(() => {
   const form = document.querySelector('#quoteForm');
   if (!form) return;
   const btn = form.querySelector('button[type=submit]');
-  const label = btn ? btn.textContent : '';
+  if (!btn) return;
+  const label = btn.textContent;
   let status = form.querySelector('.formstatus');
   if (!status) {
     status = document.createElement('p');
@@ -221,7 +231,8 @@ safe(() => {
 safe(() => {
   document.querySelectorAll('.qa button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const qa = btn.closest('.qa'); const body = qa.querySelector('.qbody');
+      const qa = btn.closest('.qa'); const body = qa && qa.querySelector('.qbody');
+      if (!qa || !body) return;
       const open = qa.classList.toggle('open');
       body.style.maxHeight = open ? body.scrollHeight + 'px' : '0';
     });
@@ -238,7 +249,7 @@ safe(() => {
     b.classList.add('active');
     const f = b.dataset.filter;
     document.querySelectorAll('.gitem').forEach(g => {
-      g.classList.toggle('hide', f !== 'all' && !g.dataset.cat.split(' ').includes(f));
+      g.classList.toggle('hide', f !== 'all' && !(g.dataset.cat || '').split(' ').includes(f));
     });
   });
 });

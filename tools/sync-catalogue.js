@@ -9,11 +9,12 @@
  * Sculpture). Facade & Cladding, Railings & Guardrails, Stair Railings and
  * Custom Fabrication are bespoke/quote-only and are left untouched.
  *
- * Two conversion paths per card (decided 2026-08-28): "Buy now" links to the
- * product page on the Shopify store (variant selection + checkout happen
- * there), and "Request a quote" routes to this site's own RFQ form
- * (contact.html) with the project name and material pre-filled via query
- * string for made-to-measure work.
+ * Two conversion paths per card (decided 2026-08-28): "Buy now" is a Shopify
+ * cart permalink (/cart/VARIANT_ID:1) that lands directly on checkout for the
+ * cheapest available variant — deliberately NOT the store's product or cart
+ * pages, so visitors can't wander into the store's own navigation. "Request a
+ * quote" routes to this site's RFQ form (contact.html) with the project name
+ * and material pre-filled via query string for made-to-measure work.
  *
  * No credentials required — /products.json is Shopify's public storefront
  * feed, the same one every visitor's browser can already fetch.
@@ -105,8 +106,13 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
     // the entry price on multi-variant products. Multi-price products get a
     // "From $X" label so a single number never misrepresents the range.
     const priceInfo = (p) => {
-      const prices = p.variants.filter(v => v.available).map(v => +v.price).filter(n => n > 0);
-      return { min: prices.length ? Math.min(...prices) : 0, from: new Set(prices).size > 1 };
+      const avail = p.variants.filter(v => v.available && +v.price > 0);
+      const cheapest = avail.reduce((a, v) => (!a || +v.price < +a.price ? v : a), null);
+      return {
+        min: cheapest ? +cheapest.price : 0,
+        from: new Set(avail.map(v => +v.price)).size > 1,
+        variantId: cheapest ? cheapest.id : null,
+      };
     };
 
     // full current range, cheapest first, deduped on cleaned title (the store
@@ -121,12 +127,16 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
 
     const cards = chosen.map((p) => {
       const title = cleanTitle(p.title);
-      const { min: price, from } = priceInfo(p);
+      const { min: price, from, variantId } = priceInfo(p);
       const img = p.images[0].src.split('?')[0];
       const alt = esc(title);
       const href = 'contact.html?project=' + encodeURIComponent(title)
         + '&material=' + encodeURIComponent(spec.material);
-      const buy = 'https://j1rk0j-9d.myshopify.com/products/' + p.handle;
+      // Cart permalink: lands the visitor straight on Shopify CHECKOUT with the
+      // cheapest available variant (the one the "From $X" badge quotes) — never
+      // on the store's product/cart pages, so there is no store nav or logo to
+      // wander off through. Other sizes/finishes go via Request a quote.
+      const buy = 'https://j1rk0j-9d.myshopify.com/cart/' + variantId + ':1';
       return `<article class="cap span-4" data-reveal><a href="${href}">`
         + `<div class="ph has-img"><img src="${img}?width=1100" `
         + `srcset="${img}?width=400 400w, ${img}?width=800 800w, ${img}?width=1100 1100w" `

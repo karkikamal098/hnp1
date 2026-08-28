@@ -9,9 +9,11 @@
  * Sculpture). Facade & Cladding, Railings & Guardrails, Stair Railings and
  * Custom Fabrication are bespoke/quote-only and are left untouched.
  *
- * Deliberately no cart, no checkout, no Shopify buy links: every card routes
- * to this site's own RFQ form (contact.html) with the project name and
- * material pre-filled via query string — one conversion path, not two.
+ * Two conversion paths per card (decided 2026-08-28): "Buy now" links to the
+ * product page on the Shopify store (variant selection + checkout happen
+ * there), and "Request a quote" routes to this site's own RFQ form
+ * (contact.html) with the project name and material pre-filled via query
+ * string for made-to-measure work.
  *
  * No credentials required — /products.json is Shopify's public storefront
  * feed, the same one every visitor's browser can already fetch.
@@ -124,19 +126,24 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
       const alt = esc(title);
       const href = 'contact.html?project=' + encodeURIComponent(title)
         + '&material=' + encodeURIComponent(spec.material);
+      const buy = 'https://j1rk0j-9d.myshopify.com/products/' + p.handle;
       return `<article class="cap span-4" data-reveal><a href="${href}">`
         + `<div class="ph has-img"><img src="${img}?width=1100" `
         + `srcset="${img}?width=400 400w, ${img}?width=800 800w, ${img}?width=1100 1100w" `
         + `sizes="(max-width:860px) 94vw, 32vw" width="${p.images[0].width}" height="${p.images[0].height}" `
         + `alt="${alt}" loading="lazy" decoding="async">${SHOW_PRICES && price > 0 ? `<span class="corner price">${from ? 'From ' : ''}${money(price)}</span>` : ''}</div>`
         + `<div class="cbody"><div class="cref">From our current range</div><h3>${esc(title)}</h3>`
-        + `<p>Request this design as shown, or specify your own dimensions and finish.</p></div></a></article>`;
+        + `<p>Buy this design as shown, or request a quote for your own dimensions and finish.</p></div></a>`
+        + `<div class="cap-actions">`
+        + `<a class="act-buy" href="${buy}" target="_blank" rel="noopener">Buy now <span class="arw">→</span></a>`
+        + `<a class="act-quote" href="${href}">Request a quote <span class="arw">→</span></a>`
+        + `</div></article>`;
     }).join('');
 
     const section = `
 <section class="section" style="background:var(--paper-2);border-block:1px solid var(--line)">
   <div class="wrap">
-    <div class="sheet-head" data-reveal><div class="sref">${spec.sref}·D —<br>Designs</div><div class="st"><span class="eyebrow">From our current range</span><h2 class="h-lg">Current designs.</h2><p class="lede" style="margin-top:1rem">Every off-the-shelf design currently available in this system. Each one can be ordered as shown, or used as a starting point for your own — request the one you like and we'll quote it to your dimensions and finish.</p></div></div>
+    <div class="sheet-head" data-reveal><div class="sref">${spec.sref}·D —<br>Designs</div><div class="st"><span class="eyebrow">From our current range</span><h2 class="h-lg">Current designs.</h2><p class="lede" style="margin-top:1rem">Every off-the-shelf design currently available in this system. Buy any design as shown directly from our store, or use it as a starting point — request a quote and we'll make it to your dimensions and finish.</p></div></div>
     <div class="cap-grid" style="margin-top:2.5rem">${cards}</div>
   </div>
 </section>

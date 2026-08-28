@@ -300,6 +300,15 @@ a.pgh-cell:hover .v{color:var(--corten)}
    This rule was simply missing, so the card collapsed to one 1/12 column
    ≈ 100px wide and its copy wrapped one word per line. */
 .cap.span-12{grid-column:span 12}
+/* catalogue card action row — Buy now (store checkout) + Request a quote */
+.cap-actions{display:flex;border-top:1px solid var(--line)}
+.cap-actions a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;font-weight:500;padding:.95rem .6rem;transition:background .35s,color .35s}
+.cap-actions .arw{transition:transform .5s var(--ease)}
+.cap-actions a:hover .arw{transform:translateX(5px)}
+.cap-actions .act-buy{background:var(--corten);color:#fff}
+.cap-actions .act-buy:hover{background:var(--corten-2)}
+.cap-actions .act-quote{color:var(--ink);border-left:1px solid var(--line)}
+.cap-actions .act-quote:hover{background:var(--ink);color:var(--paper)}
 .cap.span-12 h3{font-size:clamp(1.5rem,2.6vw,2.1rem)}
 @media(max-width:860px){.cap.span-12 .ph{aspect-ratio:16/9!important}}
 

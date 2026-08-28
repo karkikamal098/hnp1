@@ -26,6 +26,21 @@
       "source": "/account/:path*",
       "destination": "https://j1rk0j-9d.myshopify.com/account/:path*",
       "permanent": false
+    },
+    {
+      "source": "/products/:path+",
+      "destination": "https://j1rk0j-9d.myshopify.com/products/:path+",
+      "permanent": false
+    },
+    {
+      "source": "/cart",
+      "destination": "https://j1rk0j-9d.myshopify.com/cart",
+      "permanent": false
+    },
+    {
+      "source": "/cart/:path*",
+      "destination": "https://j1rk0j-9d.myshopify.com/cart/:path*",
+      "permanent": false
     }
   ]
 }

@@ -98,11 +98,20 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
     const matches = (byCat[spec.cat] || []).filter((p) => p.images.length && p.variants.some(v => v.available));
     if (!matches.length) { console.log(`  ${file}: no live matches, skipping`); continue; }
 
+    // Price basis: the cheapest AVAILABLE variant, not variants[0] — Shopify's
+    // first-listed variant is often a mid/high-priced size, so it overstated
+    // the entry price on multi-variant products. Multi-price products get a
+    // "From $X" label so a single number never misrepresents the range.
+    const priceInfo = (p) => {
+      const prices = p.variants.filter(v => v.available).map(v => +v.price).filter(n => n > 0);
+      return { min: prices.length ? Math.min(...prices) : 0, from: new Set(prices).size > 1 };
+    };
+
     // full current range, cheapest first, deduped on cleaned title (the store
     // carries several "-copy" duplicates of the same design)
     const seen = new Set();
     const chosen = [...matches]
-      .sort((a, b) => +a.variants[0].price - +b.variants[0].price)
+      .sort((a, b) => priceInfo(a).min - priceInfo(b).min)
       .filter((p) => { const k = cleanTitle(p.title).toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
 
     console.log(`  ${file}: ${matches.length} live matches, showing ${chosen.length} (deduped)`);
@@ -110,7 +119,7 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
 
     const cards = chosen.map((p) => {
       const title = cleanTitle(p.title);
-      const price = p.variants[0].price;
+      const { min: price, from } = priceInfo(p);
       const img = p.images[0].src.split('?')[0];
       const alt = esc(title);
       const href = 'contact.html?project=' + encodeURIComponent(title)
@@ -119,7 +128,7 @@ const cleanTitle = (t) => t.replace(/[🌿🔥™]/g, '').replace(/\s*[|–-]\s*
         + `<div class="ph has-img"><img src="${img}?width=1100" `
         + `srcset="${img}?width=400 400w, ${img}?width=800 800w, ${img}?width=1100 1100w" `
         + `sizes="(max-width:860px) 94vw, 32vw" width="${p.images[0].width}" height="${p.images[0].height}" `
-        + `alt="${alt}" loading="lazy" decoding="async">${SHOW_PRICES && +price > 0 ? `<span class="corner price">${money(price)}</span>` : ''}</div>`
+        + `alt="${alt}" loading="lazy" decoding="async">${SHOW_PRICES && price > 0 ? `<span class="corner price">${from ? 'From ' : ''}${money(price)}</span>` : ''}</div>`
         + `<div class="cbody"><div class="cref">From our current range</div><h3>${esc(title)}</h3>`
         + `<p>Request this design as shown, or specify your own dimensions and finish.</p></div></a></article>`;
     }).join('');
